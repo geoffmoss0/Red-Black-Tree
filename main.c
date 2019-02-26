@@ -101,6 +101,7 @@ void repair(struct node *node) {
 		}
 	}
 	root->color = 0;
+	printf("root value: %d\n", root->value);
 }
 
 
@@ -136,6 +137,7 @@ int insert(struct node *start, int val) {
 
 			printf("Added node with value %d to node with value %d on left\n", start->left->value, start->value);
 			printf("Repairing...\n");
+			repair(start->left);
 			return 1;
 		} else {
 			return insert(start->left, val);
@@ -164,11 +166,29 @@ int insert(struct node *start, int val) {
 			start->right->right = right;
 			printf("Added node with value %d to node with value %d on right\n", start->right->value, start->value);	
 			printf("Repairing...\n");
+			repair(start->right);
 			return 1;
 		} else {
 			return insert(start->right, val);
 		}
 	}
+}
+
+
+void free_all(struct node *start) {
+	if (start->left->value == 0) {
+		free(start->left);
+	} else {
+		free_all(start->left);
+	}
+
+	if (start->right->value == 0) {
+		free(start->right);
+	} else {
+		free_all(start->right);
+	}
+
+	free(start);
 }
 
 int main(void) {
@@ -219,6 +239,6 @@ int main(void) {
 	printf("\n");
 
 	printf("root value: %d\n", root->value);
-
+	free_all(root);
 	return 0;
 }
